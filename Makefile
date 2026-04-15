@@ -1,6 +1,10 @@
 # ===============================
 # Настройки проекта
 # ===============================
+VENV = .venv
+PYTHON = $(VENV)\Scripts\python.exe
+POETRY_RUN = $(PYTHON) -m poetry run
+
 PY_SRCS = config manage.py
 
 .PHONY: help install lint fmt type security cc mi check run test
