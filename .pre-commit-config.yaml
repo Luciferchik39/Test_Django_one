@@ -10,11 +10,18 @@ repos:
     rev: v1.20.1
     hooks:
       - id: mypy
-        additional_dependencies: [django-stubs]
+        additional_dependencies:
+          - django-stubs>=6.0.2
         exclude: migrations
+        args: [--ignore-missing-imports]
 
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.9.4
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
     hooks:
-      - id: bandit
-        args: ["-r", "config", "manage.py", "-s", "B311,B324"]
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+
+# Bandit запускаем отдельно через Makefile
