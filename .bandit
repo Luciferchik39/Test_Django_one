@@ -1,0 +1,16 @@
+# .bandit
+exclude_dirs:
+  - .venv
+  - venv
+  - migrations
+  - __pycache__
+  - config/settings.py  # исключить настройки (много ложных срабатываний)
+
+# Уровни строгости
+severity: medium
+confidence: medium
+
+# Пропустить проверки (если нужно)
+skips:
+  - B311  # random (используется в Django)
+  - B603  # subprocess без shell
