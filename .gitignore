@@ -21,9 +21,20 @@ staticfiles/
 
 # Secrets
 .env
-*.env
+.env.*
+!.env.example          # Разрешаем только шаблон
+!.env.*.example        # Разрешаем шаблоны типа .env.local.example
+
+config.yaml
+config.yml
+!.config.yaml.example
+!.config.yml.example
+
+# Игнорируем любые файлы, содержащие реальные секреты
+*.secret.*
 *.key
 *.pem
+*.p12
 
 # IDE
 .vscode/
