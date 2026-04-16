@@ -34,9 +34,13 @@ if "%1"=="check" (
     echo Running complexity analysis...
     %POETRY_RUN% radon cc config manage.py -s -a
     echo.
-    echo ✅ All checks passed!
+    echo All checks passed!
 )
 if "%1"=="run" %PYTHON% manage.py runserver
 if "%1"=="test" %POETRY_RUN% pytest
+if "%1"=="docker-build" docker build -t django-app .
+if "%1"=="docker-run" docker run -p 8000:8000 --env-file .env django-app
+if "%1"=="docker-compose-up" docker-compose up
+if "%1"=="docker-compose-down" docker-compose down
 
 # .\make check для запуска проверко по этому файлу
