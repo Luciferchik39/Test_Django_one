@@ -1,7 +1,7 @@
 ================================================================================
 СТРУКТУРА ПРОЕКТА
 Путь: C:\Users\Ilya\Documents\My_project\Test_Django_one
-Дата: 2026-04-17 14:50:34
+Дата: 2026-04-17 15:12:34
 ================================================================================
 
 📁 Test_Django_one/
@@ -17,11 +17,11 @@
     │       ├── tests.py (29.0 B)
     │       └── views.py (29.0 B)
     ├── check_structure.py (9.8 KB)
-    ├── conftest.py (1.1 KB)
-    ├── docker-compose.yml (771.0 B)
+    ├── conftest.py (1.3 KB)
+    ├── docker-compose.yml (1.1 KB)
     ├── make.bat (2.2 KB)
-    ├── manage.py (909.0 B)
-    ├── pyproject.toml (2.2 KB)
+    ├── manage.py (911.0 B)
+    ├── pyproject.toml (2.3 KB)
     ├── pytest.ini (238.0 B)
     ├── README.md (0.0 B)
     ├── src/
