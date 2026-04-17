@@ -1,4 +1,26 @@
-@"
+# === СНАЧАЛА РАЗРЕШАЕМ ШАБЛОНЫ ===
+# Secrets - ВАЖЕН ПОРЯДОК!
+!.env.example
+!.env.*.example
+!.config.yaml.example
+!.config.yml.example
+
+# === ПОТОМ ЗАПРЕЩАЕМ ВСЁ ОСТАЛЬНОЕ ===
+
+# Secrets
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+.env.test
+config.yaml
+config.yml
+*.secret.*
+*.key
+*.pem
+*.p12
+
 # Python
 __pycache__/
 *.py[cod]
@@ -9,32 +31,24 @@ __pycache__/
 venv/
 ENV/
 env/
+*.egg-info/
+dist/
+build/
 
 # Django
 *.log
 *.pot
 *.pyc
+local_settings.py
 db.sqlite3
+db.sqlite3-journal
 media/
 static/
 staticfiles/
 
-# Secrets
-.env
-.env.*
-!.env.example          # Разрешаем только шаблон
-!.env.*.example        # Разрешаем шаблоны типа .env.local.example
-
-config.yaml
-config.yml
-!.config.yaml.example
-!.config.yml.example
-
-# Игнорируем любые файлы, содержащие реальные секреты
-*.secret.*
-*.key
-*.pem
-*.p12
+# Docker
+*.pid
+docker-compose.override.yml
 
 # IDE
 .vscode/
@@ -42,16 +56,23 @@ config.yml
 *.swp
 *.swo
 *~
-.DS_Store
+.project
+.pydevproject
 
 # Testing
+.pytest_cache/
 .coverage
 htmlcov/
-.pytest_cache/
 .tox/
 .mypy_cache/
 .ruff_cache/
+.bandit_cache/
+.radon_cache/
 
-# Poetry
-poetry.lock
-"@ | Out-File -FilePath .gitignore -Encoding UTF8
+# Pre-commit
+.pre-commit-config.local.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
