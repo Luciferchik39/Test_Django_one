@@ -149,25 +149,6 @@ django = "*"
 typing-extensions = "*"
 
 [[package]]
-name = "environs"
-version = "15.0.1"
-description = "simplified environment variable parsing"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "environs-15.0.1-py3-none-any.whl", hash = "sha256:a6aeb3e18d5649a4e74f62984f0d84ec869269cff588a43685272c72b5b8979b"},
-    {file = "environs-15.0.1.tar.gz", hash = "sha256:638106bfb5d8c9a13ee51c23a9f2416baf9a748c8e537fec771102927cd02aa8"},
-]
-
-[package.dependencies]
-marshmallow = ">=4.0.0"
-python-dotenv = "*"
-
-[package.extras]
-django = ["dj-database-url", "dj-email-url", "django-cache-url"]
-
-[[package]]
 name = "filelock"
 version = "3.28.0"
 description = "A platform independent file lock."
@@ -348,18 +329,6 @@ plugins = ["mdit-py-plugins (>=0.5.0)"]
 profiling = ["gprof2dot"]
 rtd = ["ipykernel", "jupyter_sphinx", "mdit-py-plugins (>=0.5.0)", "myst-parser", "pyyaml", "sphinx", "sphinx-book-theme (>=1.0,<2.0)", "sphinx-copybutton", "sphinx-design"]
 testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions", "requests"]
-
-[[package]]
-name = "marshmallow"
-version = "4.3.0"
-description = "A lightweight library for converting complex datatypes to and from native Python datatypes."
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "marshmallow-4.3.0-py3-none-any.whl", hash = "sha256:46c4fe6984707e3cbd485dfebbf0a59874f58d695aad05c1668d15e8c6e13b46"},
-    {file = "marshmallow-4.3.0.tar.gz", hash = "sha256:fb43c53b3fe240b8f6af37223d6ef1636f927ad9bea8ab323afad95dff090880"},
-]
 
 [[package]]
 name = "mdurl"
@@ -1147,4 +1116,4 @@ python-discovery = ">=1.2.2"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "00df4334382c5cc905a731ff8a78abbd6701f720817ab275618d1f3d9944019a"
+content-hash = "fa41494b00f016d2fdff12836290dd1266154916199825b22d24a42a13dce481"

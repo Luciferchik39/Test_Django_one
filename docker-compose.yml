@@ -1,37 +1,50 @@
 services:
-  web:
+  db:                                          # ← добавляем сервис БД
+    image: postgres:17-alpine
+    container_name: django_star_db
+    environment:
+      - POSTGRES_DB=django_star_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:                                         # ← обновляем существующий
     build: .
     container_name: django_star_app
     ports:
       - "8000:8000"
     volumes:
       - .:/app
-      - /app/.venv  # Игнорируем виртуальное окружение в контейнере
+      - /app/.venv
     environment:
       - SECRET_KEY=${SECRET_KEY:-django-insecure-dev-key}
       - DEBUG=${DEBUG:-True}
       - DJANGO_SETTINGS_MODULE=Django_star.settings
       - PYTHONPATH=/app/src:/app/apps
       - PYTHONUNBUFFERED=1
+      # ДОБАВЛЯЕМ переменные для PostgreSQL:
+      - USE_POSTGRES=True
+      - DB_NAME=django_star_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db          # ← имя сервиса "db"
+      - DB_PORT=5432
     env_file:
       - .env
-    command: python manage.py runserver 0.0.0.0:8000
-    # Для production используйте:
-    # command: gunicorn Django_star.wsgi:application --bind 0.0.0.0:8000
+    depends_on:
+      db:
+        condition: service_healthy  # ждём пока БД запустится
+    command: sh -c "
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
     restart: unless-stopped
 
-  # Опционально: база данных PostgreSQL
-  # db:
-  #   image: postgres:15
-  #   container_name: django_db
-  #   environment:
-  #     - POSTGRES_DB=${DB_NAME}
-  #     - POSTGRES_USER=${DB_USER}
-  #     - POSTGRES_PASSWORD=${DB_PASSWORD}
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-
-# volumes:
-#   postgres_data:
+volumes:
+  postgres_data:  # ← volume для сохранения данных БД

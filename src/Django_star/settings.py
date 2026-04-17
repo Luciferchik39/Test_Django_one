@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+# src/Django_star/settings.py
 from pathlib import Path
 import sys
 
-from environs import Env
+from .config import settings  # ← импортируем из config.py
 
 # BASE_DIR - корень проекта (где manage.py)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,14 +24,16 @@ APPS_DIR = BASE_DIR / 'apps'
 if APPS_DIR.exists() and str(APPS_DIR) not in sys.path:
     sys.path.insert(0, str(APPS_DIR))
 
-env = Env()
-env.read_env(str(BASE_DIR / '.env'))
+# ============================================
+# БЕЗОПАСНОСТЬ
+# ============================================
+SECRET_KEY = settings.SECRET_KEY
+DEBUG = settings.DEBUG
+ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
-SECRET_KEY = env.str('SECRET_KEY', 'django-insecure-key-for-dev')
-DEBUG = env.bool('DEBUG', True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['localhost', '127.0.0.1'])
-
-# Приложения
+# ============================================
+# ПРИЛОЖЕНИЯ
+# ============================================
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,11 +44,14 @@ DJANGO_APPS = [
 ]
 
 LOCAL_APPS = [
-    'my_app',  # теперь без apps. префикса, так как apps в PYTHONPATH
+    'my_app',  # без apps. префикса, так как apps в PYTHONPATH
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
+# ============================================
+# MIDDLEWARE
+# ============================================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,8 +62,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ============================================
+# URL И WSGI
+# ============================================
 ROOT_URLCONF = 'Django_star.urls'
+WSGI_APPLICATION = 'Django_star.wsgi.application'
 
+# ============================================
+# ШАБЛОНЫ
+# ============================================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -73,24 +86,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Django_star.wsgi.application'
-
-
-# Database
-env.read_env(str(BASE_DIR / '.env'))
-
-# Database selection
-USE_POSTGRES = env.bool('USE_POSTGRES', False)
-
-if USE_POSTGRES:
+# ============================================
+# БАЗА ДАННЫХ
+# ============================================
+if settings.USE_POSTGRES:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env.str('DB_NAME', 'django_star_db'),
-            'USER': env.str('DB_USER', 'postgres'),
-            'PASSWORD': env.str('DB_PASSWORD', ''),
-            'HOST': env.str('DB_HOST', 'localhost'),
-            'PORT': env.str('DB_PORT', '5432'),
+            'NAME': settings.DB_NAME,
+            'USER': settings.DB_USER,
+            'PASSWORD': settings.DB_PASSWORD,
+            'HOST': settings.DB_HOST,
+            'PORT': settings.DB_PORT,
         }
     }
 else:
@@ -101,10 +108,9 @@ else:
         }
     }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
+# ============================================
+# ВАЛИДАЦИЯ ПАРОЛЕЙ
+# ============================================
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -120,20 +126,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
+# ============================================
+# ИНТЕРНАЦИОНАЛИЗАЦИЯ
+# ============================================
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
+# ============================================
+# СТАТИЧЕСКИЕ И МЕДИА ФАЙЛЫ
+# ============================================
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# ============================================
+# ПОЛЕ ПЕРВИЧНОГО КЛЮЧА ПО УМОЛЧАНИЮ
+# ============================================
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
