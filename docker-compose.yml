@@ -1,19 +1,24 @@
 services:
   web:
     build: .
-    container_name: django_app
+    container_name: django_star_app
     ports:
       - "8000:8000"
     volumes:
       - .:/app
+      - /app/.venv  # Игнорируем виртуальное окружение в контейнере
     environment:
-      - SECRET_KEY=${SECRET_KEY}
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-dev-key}
       - DEBUG=${DEBUG:-True}
-      - DJANGO_SETTINGS_MODULE=config.settings
+      - DJANGO_SETTINGS_MODULE=Django_star.settings
+      - PYTHONPATH=/app/src:/app/apps
       - PYTHONUNBUFFERED=1
     env_file:
       - .env
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
+    # Для production используйте:
+    # command: gunicorn Django_star.wsgi:application --bind 0.0.0.0:8000
+    restart: unless-stopped
 
   # Опционально: база данных PostgreSQL
   # db:
