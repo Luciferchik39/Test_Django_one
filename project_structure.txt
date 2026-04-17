@@ -1,0 +1,43 @@
+================================================================================
+СТРУКТУРА ПРОЕКТА
+Путь: C:\Users\Ilya\Documents\My_project\Test_Django_one
+Дата: 2026-04-17 14:50:34
+================================================================================
+
+📁 Test_Django_one/
+    ├── .pre-commit-config.yaml (718.0 B)
+    ├── apps/
+    │   └── my_app/
+    │       ├── __init__.py (0.0 B)
+    │       ├── admin.py (32.0 B)
+    │       ├── apps.py (91.0 B)
+    │       ├── migrations/
+    │       │   └── __init__.py (0.0 B)
+    │       ├── models.py (30.0 B)
+    │       ├── tests.py (29.0 B)
+    │       └── views.py (29.0 B)
+    ├── check_structure.py (9.8 KB)
+    ├── conftest.py (1.1 KB)
+    ├── docker-compose.yml (771.0 B)
+    ├── make.bat (2.2 KB)
+    ├── manage.py (909.0 B)
+    ├── pyproject.toml (2.2 KB)
+    ├── pytest.ini (238.0 B)
+    ├── README.md (0.0 B)
+    ├── src/
+    │   ├── __init__.py (0.0 B)
+    │   └── Django_star/
+    │       ├── __init__.py (0.0 B)
+    │       ├── asgi.py (415.0 B)
+    │       ├── settings.py (3.3 KB)
+    │       ├── urls.py (789.0 B)
+    │       └── wsgi.py (415.0 B)
+    ├── static/
+    └── tests/
+        └── test_project.py (2.1 KB)
+
+================================================================================
+СТАТИСТИКА:
+  Всего директорий: 1
+  Всего файлов: 23
+================================================================================

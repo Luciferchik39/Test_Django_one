@@ -1,7 +1,7 @@
 [project]
 name = "poetry-django"
 version = "0.1.0"
-description = ""
+description = "Django project with src-layout"
 authors = [
     {name = "Ilya", email = "ilya@ops.com"}
 ]
@@ -42,6 +42,13 @@ extend-exclude = [
     "dist",
     "__pycache__",
     "migrations",
+    "logs",
+    "static",
+    "media",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".pytest_cache",
+    ".idea",
 ]
 
 [tool.ruff.lint]
@@ -51,7 +58,7 @@ select = [
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["config"]
+known-first-party = ["Django_star", "apps"]
 combine-as-imports = true
 force-sort-within-sections = true
 
@@ -63,7 +70,7 @@ docstring-code-format = true
 
 [tool.mypy]
 python_version = "3.12"
-#plugins = ["mypy_django_plugin.main"]
+# plugins = ["mypy_django_plugin.main"]  # Временно отключаем
 warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = true
@@ -75,15 +82,21 @@ no_implicit_optional = true
 ignore_missing_imports = false
 
 [[tool.mypy.overrides]]
-module = ["*.migrations.*", "config.settings"]
+module = ["*.migrations.*", "apps.*.migrations.*", "Django_star.settings"]
 ignore_errors = true
 
 [tool.django-stubs]
-django_settings_module = "config.settings"
-strict_settings = false  # для начала можно отключить
+django_settings_module = "Django_star.settings"
+strict_settings = false
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.settings"
+DJANGO_SETTINGS_MODULE = "Django_star.settings"
 python_files = ["test_*.py", "*_test.py"]
-testpaths = ["."]
-addopts = "-v --tb=short"
+testpaths = ["tests", "apps"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings",
+    "--capture=no"
+]
