@@ -1,10 +1,9 @@
 # conftest.py
-"""Pytest configuration and fixtures for Django project."""
 import os
 from pathlib import Path
 import sys
 
-# Добавляем пути для корректного импорта (ДОЛЖНО БЫТЬ В НАЧАЛЕ)
+# Добавляем пути для корректного импорта
 BASE_DIR = Path(__file__).resolve().parent
 
 # Добавляем src в PYTHONPATH
@@ -22,11 +21,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Django_star.settings')
 
 # Теперь можно импортировать Django (noqa: E402 - игнорируем порядок импортов)
 import django  # noqa: E402
+
+django.setup()
+
 from django.test import Client  # noqa: E402
 import pytest  # noqa: E402
-
-# Инициализируем Django
-django.setup()
 
 
 @pytest.fixture

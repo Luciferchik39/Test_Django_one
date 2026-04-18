@@ -82,8 +82,9 @@ no_implicit_optional = true
 ignore_missing_imports = false
 
 [[tool.mypy.overrides]]
-module = ["*.migrations.*", "apps.*.migrations.*", "Django_star.settings"]
+module = ["*.migrations.*", "apps.*.migrations.*"]
 ignore_errors = true
+
 
 [tool.django-stubs]
 django_settings_module = "Django_star.settings"

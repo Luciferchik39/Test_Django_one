@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ product.name }}</h1>
+    
+    <div class="product-detail">
+        <p><strong>Описание:</strong> {{ product.description }}</p>
+        <p><strong>Цена:</strong> {{ product.price }} ₽</p>
+        <p><strong>В наличии:</strong> {{ product.stock }}</p>
+        <p><strong>Статус:</strong> {% if product.is_active %}Активен{% else %}Неактивен{% endif %}</p>
+    </div>
+    
+    <p><a href="{% url 'my_app:product_list' %}">Назад к списку товаров</a></p>
+    <p><a href="{% url 'my_app:home' %}">На главную</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Книжный магазин{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Добро пожаловать в Книжный магазин!</h1>
+    
+    <h2>Наши товары</h2>
+    <div class="products">
+        {% for product in products %}
+            <div class="product">
+                <h3><a href="{% url 'my_app:product_detail' product.id %}">{{ product.name }}</a></h3>
+                <p>{{ product.description|truncatewords:20 }}</p>
+                <p>Цена: {{ product.price }} ₽</p>
+                <p>В наличии: {{ product.stock }}</p>
+            </div>
+        {% empty %}
+            <p>Товаров пока нет</p>
+        {% endfor %}
+    </div>
+    
+    <p><a href="{% url 'my_app:product_list' %}">Все товары</a></p>
+    <p><a href="{% url 'my_app:contact' %}">Контакты</a></p>
+</div>
+{% endblock %}

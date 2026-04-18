@@ -1,0 +1,119 @@
+# Создаём base.html в папке templates (не в my_app!)
+@'
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Книжный магазин{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        .product h3 {
+            margin-top: 0;
+        }
+        .product h3 a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .product h3 a:hover {
+            text-decoration: underline;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #0066cc;
+        }
+        .alert {
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        form input, form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        nav {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #0066cc;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="{% url 'my_app:home' %}">Главная</a>
+            <a href="{% url 'my_app:product_list' %}">Товары</a>
+            <a href="{% url 'my_app:contact' %}">Контакты</a>
+        </nav>
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
+'@ | Out-File -FilePath templates\base.html -Encoding UTF8

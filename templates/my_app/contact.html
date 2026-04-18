@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Свяжитесь с нами</h1>
+    
+    <!-- Добавьте отображение сообщений -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+{% endblock %}
