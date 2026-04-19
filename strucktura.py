@@ -147,7 +147,6 @@ class ProjectValidator:
             'pyproject.toml': self.root_path / 'pyproject.toml',
             'pytest.ini': self.root_path / 'pytest.ini',
             'conftest.py': self.root_path / 'conftest.py',
-            'make.bat': self.root_path / 'make.bat',
             '.env': self.root_path / '.env',
             'src/Django_star/settings.py': self.root_path / 'src' / 'Django_star' / 'settings.py',
             'src/Django_star/urls.py': self.root_path / 'src' / 'Django_star' / 'urls.py',

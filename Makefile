@@ -1,16 +1,21 @@
 # Makefile для Django_star проекта
-# Работает на Windows (через make или mingw32-make) и Linux
+# Работает на Windows и Linux, а также внутри Docker контейнера
 
 .PHONY: help install lint fmt type security cc check run test migrate shell docker-build docker-run docker-up docker-down
 
-# Переменные
-VENV := .venv
-PYTHON := $(VENV)/bin/python
-POETRY_RUN := $(PYTHON) -m poetry run
-
-# Определение Windows (для совместимости)
-ifeq ($(OS),Windows_NT)
-    PYTHON := $(VENV)/Scripts/python.exe
+# Определяем окружение
+ifeq ($(INSIDE_CONTAINER),true)
+    # Внутри контейнера: poetry установлен глобально
+    POETRY_RUN := poetry run
+    PYTHON := python
+else
+    # На хосте: используем .venv
+    VENV := .venv
+    ifeq ($(OS),Windows_NT)
+        PYTHON := $(VENV)/Scripts/python.exe
+    else
+        PYTHON := $(VENV)/bin/python
+    endif
     POETRY_RUN := $(PYTHON) -m poetry run
 endif
 
@@ -33,7 +38,7 @@ help:
 	@echo "  make docker-down    - Docker compose down"
 
 install:
-	$(PYTHON) -m poetry install
+	$(POETRY_RUN) install
 
 lint:
 	$(POETRY_RUN) ruff check . --fix
@@ -63,19 +68,19 @@ check:
 	@echo "Running complexity analysis..."
 	$(POETRY_RUN) radon cc src/ apps/ manage.py -s -a
 	@echo ""
-	@echo "All checks passed!"
+	@echo "✅ All checks passed!"
 
 run:
-	$(PYTHON) manage.py runserver
+	python manage.py runserver
 
 test:
-	$(POETRY_RUN) pytest
+	$(POETRY_RUN) pytest -v
 
 migrate:
-	$(PYTHON) manage.py migrate
+	python manage.py migrate
 
 shell:
-	$(PYTHON) manage.py shell
+	python manage.py shell
 
 docker-build:
 	docker build -t django_star:latest .

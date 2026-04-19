@@ -28,6 +28,7 @@ services:
       - ./media:/app/media
       - ./staticfiles:/app/staticfiles
     environment:
+      - INSIDE_CONTAINER=true
       - APP_VERSION=${APP_VERSION:-1.0.0}
       - SECRET_KEY=${SECRET_KEY:-django-insecure-dev-key}
       - DEBUG=${DEBUG:-False}
