@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.my_app.middleware.RequestLoggingMiddleware',
 ]
 
 # ============================================
@@ -148,3 +149,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ПОЛЕ ПЕРВИЧНОГО КЛЮЧА ПО УМОЛЧАНИЮ
 # ============================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Loguru настройки
+from .logging_config import setup_logging  # noqa: E402
+
+# Настройка логирования при запуске
+setup_logging()

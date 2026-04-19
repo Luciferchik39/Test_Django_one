@@ -1,5 +1,5 @@
 # ============================================
-# СТАДИЯ 1: Установка Poetry
+# СТАДИЯ 1: Установка Poetry (отдельный слой)
 # ============================================
 FROM python:3.12-slim AS poetry-builder
 
@@ -31,6 +31,7 @@ ENV PATH="/opt/poetry/bin:$PATH"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
+
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -48,17 +49,31 @@ RUN poetry config virtualenvs.create true \
 # ============================================
 FROM python:3.12-slim AS runner
 
+# Аргументы для версионирования
+ARG APP_VERSION=1.0.0
+ARG BUILD_DATE
+ARG VCS_REF
+
+# Метаданные образа
+LABEL maintainer="Ilya <ilya@ops.com>" \
+      version="${APP_VERSION}" \
+      build-date="${BUILD_DATE}" \
+      vcs-ref="${VCS_REF}" \
+      description="Django_star - Book Store Application"
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DJANGO_SETTINGS_MODULE=Django_star.settings \
-    PYTHONPATH="/app/src:/app/apps"
+    PYTHONPATH="/app/src:/app/apps" \
+    APP_VERSION=${APP_VERSION}
 
 WORKDIR /app
 
-# Устанавливаем только runtime зависимости (без gcc)
+# Устанавливаем только runtime зависимости
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     curl \
+    make \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -82,8 +97,12 @@ USER django
 
 EXPOSE 8000
 
+# Проверка здоровья контейнера
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health/ || exit 1
+
 # Для разработки используем runserver
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 # Для production используйте gunicorn (раскомментируйте ниже)
-# CMD ["gunicorn", "Django_star.wsgi:application", "--bind", "0.0.0.0:8000"]
+# CMD ["gunicorn", "Django_star.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]

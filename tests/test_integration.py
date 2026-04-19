@@ -122,14 +122,13 @@
 
 from decimal import Decimal
 
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.db import connection
-from django.test.utils import CaptureQueriesContext
 from django.contrib.messages import get_messages  # ← Добавить импорт
-
+from django.db import connection
+from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
+from django.urls import reverse
+from my_app.forms import ContactForm
 from my_app.models import Product
-from my_app.forms import ContactForm, ProductForm
 
 
 class IntegrationFlowTest(TestCase):
