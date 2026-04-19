@@ -68,7 +68,7 @@ check:
 	@echo "Running complexity analysis..."
 	$(POETRY_RUN) radon cc src/ apps/ manage.py -s -a
 	@echo ""
-	@echo "✅ All checks passed!"
+	@echo "All checks passed!"
 
 run:
 	python manage.py runserver

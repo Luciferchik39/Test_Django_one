@@ -1,21 +1,30 @@
 """
 Loguru конфигурация для Django проекта
 """
+from datetime import datetime
+import json
 from pathlib import Path
 import sys
-import json
-from datetime import datetime
-from typing import Dict, Any
+from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
 from loguru import logger
 
+# Решаем проблему с Record для Mypy
+if TYPE_CHECKING:
+    from loguru import Record
+else:
+    # Рантайм заглушка, чтобы код не падал
+    Record = Any
 
-def json_formatter(record: Dict[str, Any]) -> str:
+
+def json_formatter(record: Record) -> str:
     """
     Форматирует лог в JSON для production окружения
     """
-    log_entry = {
+    exception = record["exception"]
+
+    payload: dict[str, Any] = {
         "timestamp": record["time"].isoformat(),
         "level": record["level"].name,
         "module": record["name"],
@@ -26,114 +35,92 @@ def json_formatter(record: Dict[str, Any]) -> str:
         "thread": record["thread"].id if record["thread"] else None,
     }
 
-    # Добавляем exception если есть
-    if record["exception"]:
-        log_entry["exception"] = {
-            "type": record["exception"].type.__name__,
-            "value": str(record["exception"].value),
-            "traceback": record["exception"].traceback,
+    if exception:
+        payload["exception"] = {
+            "type": getattr(exception.type, "__name__", str(exception.type)),
+            "value": str(exception.value),
+            "traceback": bool(exception.traceback),
         }
 
-    # Добавляем дополнительные поля из extra
-    extra_fields = {k: v for k, v in record["extra"].items()
-                   if k not in ['name', 'function', 'line']}
+    extra_fields = {
+        k: v for k, v in record["extra"].items()
+        if k not in {"name", "function", "line"}
+    }
     if extra_fields:
-        log_entry["extra"] = extra_fields
+        payload["extra"] = extra_fields
 
-    return json.dumps(log_entry, ensure_ascii=False) + "\n"
+    return json.dumps(payload, ensure_ascii=False) + "\n"
 
 
-def text_formatter(record: Dict[str, Any]) -> str:
+def text_formatter(record: Record) -> str:
     """
     Текстовый формат для разработки
     """
     return "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}\n"
 
 
-def setup_logging():
+def setup_logging() -> None:
     """
     Настройка Loguru с поддержкой JSON формата в production
     """
-    # Очищаем стандартные обработчики
     logger.remove()
 
-    # Определяем окружение
-    is_production = not settings.DEBUG
+    is_production = not getattr(settings, "DEBUG", True)
+    log_dir = Path(settings.BASE_DIR) / "logs"
+    log_dir.mkdir(exist_ok=True)
 
-    # 1. Консоль (всегда текстовый формат для читаемости)
+    # 1. Консоль
     logger.add(
         sys.stdout,
         format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan> | <level>{message}</level>",
         level="INFO" if is_production else "DEBUG",
         colorize=True,
-        enqueue=True
+        enqueue=True,
     )
 
-    # 2. Директория для логов
-    log_dir = Path(settings.BASE_DIR) / 'logs'
-    log_dir.mkdir(exist_ok=True)
+    common_opts: dict[str, Any] = {
+        "rotation": "100 MB",
+        "retention": "7 days",
+        "compression": "zip",
+        "encoding": "utf-8",
+        "enqueue": True,
+    }
 
-    # 3. Основной файл логов (разный формат для dev/prod)
-    if is_production:
-        # Production: JSON формат для машинного чтения
-        log_file = log_dir / 'app_{time:YYYY-MM-DD}.json'
-        log_format = json_formatter
-        log_level = "INFO"
-    else:
-        # Development: текстовый формат для человека
-        log_file = log_dir / 'app_{time:YYYY-MM-DD}.log'
-        log_format = text_formatter
-        log_level = "DEBUG"
+    # 2. Основной лог
+    log_ext = "json" if is_production else "log"
+    main_format = json_formatter if is_production else text_formatter
 
     logger.add(
-        log_file,
-        format=log_format,
-        rotation="100 MB",
-        retention="7 days",
-        compression="zip",
-        encoding="utf-8",
-        level=log_level,
-        enqueue=True
+        log_dir / f"app_{{time:YYYY-MM-DD}}.{log_ext}",
+        format=main_format,
+        level="INFO" if is_production else "DEBUG",
+        **common_opts,
     )
 
-    # 4. Отдельный файл для ошибок (JSON в production)
-    if is_production:
-        error_file = log_dir / 'errors_{time:YYYY-MM-DD}.json'
-        error_format = json_formatter
-    else:
-        error_file = log_dir / 'errors_{time:YYYY-MM-DD}.log'
-        error_format = text_formatter
-
+    # 3. Ошибки
     logger.add(
-        error_file,
-        format=error_format,
-        rotation="10 MB",
-        retention="30 days",
-        compression="zip",
-        encoding="utf-8",
+        log_dir / f"errors_{{time:YYYY-MM-DD}}.{log_ext}",
+        format=main_format,
         level="ERROR",
-        filter=lambda record: record["level"].name == "ERROR",
-        enqueue=True
+        filter=lambda r: r["level"].name == "ERROR",
+        **common_opts,
     )
 
-    # 5. Отдельный файл для security логов (всегда JSON)
+    # 4. Security (Всегда JSON)
     logger.add(
-        log_dir / 'security_{time:YYYY-MM-DD}.json',
+        log_dir / "security_{time:YYYY-MM-DD}.json",
         format=json_formatter,
-        rotation="50 MB",
-        retention="90 days",
-        compression="zip",
-        encoding="utf-8",
         level="INFO",
-        filter=lambda record: record["extra"].get("type") == "security",
-        enqueue=True
+        filter=lambda r: r["extra"].get("type") == "security",
+        **common_opts,
     )
 
-    logger.info(f"✅ Loguru настроен (режим: {'PRODUCTION' if is_production else 'DEVELOPMENT'}, формат: {'JSON' if is_production else 'TEXT'})")
 
-
-# Функция для отправки security логов
-def log_security_event(event_type: str, user_id: str = None, details: dict = None):
+def log_security_event(
+    event_type: str,
+    user_id: str | int | None = None,
+    details: dict[str, Any] | None = None
+) -> None:
     """
     Логирование событий безопасности
     """
@@ -143,6 +130,6 @@ def log_security_event(event_type: str, user_id: str = None, details: dict = Non
             "event_type": event_type,
             "user_id": user_id,
             "details": details or {},
-            "timestamp": datetime.now().isoformat()
-        }
+            "timestamp": datetime.now().isoformat(),
+        },
     )
