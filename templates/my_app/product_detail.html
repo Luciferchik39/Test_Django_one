@@ -1,14 +1,18 @@
 {% extends "base.html" %}
+{% load l10n %}  {# 1. Загружаем библиотеку локализации в начале файла #}
 
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
 <div class="container">
     <h1>{{ product.name }}</h1>
-    
+
     <div class="product-detail">
         <p><strong>Описание:</strong> {{ product.description }}</p>
-        <p><strong>Цена:</strong> {{ product.price }} ₽</p>
+
+        {# 2. Добавляем фильтр unlocalize после floatformat:2 #}
+        <p><strong>Цена:</strong> {{ product.price|floatformat:2|unlocalize }} ₽</p>
+
         <p><strong>В наличии:</strong> {{ product.stock }}</p>
         <p><strong>Статус:</strong> {% if product.is_active %}Активен{% else %}Неактивен{% endif %}</p>
     </div>

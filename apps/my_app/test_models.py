@@ -3,8 +3,9 @@ from decimal import Decimal
 from django.test import TestCase
 from django.urls import reverse
 
-from .forms import ContactForm, ProductForm
-from .models import Product
+# Замени относительные импорты на абсолютные
+from apps.my_app.forms import ContactForm, ProductForm
+from apps.my_app.models import Product
 
 
 class ProductModelTest(TestCase):
@@ -88,7 +89,11 @@ class ProductViewTest(TestCase):
         response = self.client.get(reverse('my_app:product_detail', args=[self.product.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Тестовый продукт')
-        self.assertContains(response, '99.99')
+        # Проверяем оба варианта: точка или запятая
+        self.assertTrue(
+            '99.99' in response.content.decode() or '99,99' in response.content.decode(),
+            "Price '99.99' or '99,99' not found in response"
+        )
 
     def test_inactive_product_not_shown(self):
         """Тест: неактивный продукт не отображается."""

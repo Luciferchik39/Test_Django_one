@@ -2,4 +2,6 @@ from django.apps import AppConfig
 
 
 class MyAppConfig(AppConfig):
-    name = 'my_app'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.my_app'
+    verbose_name = 'Моё приложение'

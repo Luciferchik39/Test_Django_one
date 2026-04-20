@@ -1,6 +1,7 @@
 # tests/test_project.py
 from django.conf import settings
 from django.test import TestCase
+from django.apps import apps
 
 
 class ProjectTests(TestCase):
@@ -8,18 +9,16 @@ class ProjectTests(TestCase):
 
     def test_django_setup(self):
         """Проверка настроек Django."""
-        # В тестах DEBUG должен быть False (как в production)
-        # Не проверяем конкретное значение, а проверяем, что настройки загружены
-        assert hasattr(settings, 'DEBUG')
-        assert hasattr(settings, 'INSTALLED_APPS')
-        assert 'my_app' in settings.INSTALLED_APPS
+        self.assertTrue(hasattr(settings, 'DEBUG'))
+        self.assertTrue(hasattr(settings, 'INSTALLED_APPS'))
+        # Используем 'my_app' (без apps.) для проверки
+        self.assertIn('apps.my_app', settings.INSTALLED_APPS)
         print(f"✅ Django настроен, DEBUG={settings.DEBUG}")
 
     def test_app_exists(self):
-        """Проверка наличия приложения."""
-        from django.apps import apps
         app = apps.get_app_config('my_app')
-        assert app.name == 'my_app'
+        # Проверяем, что имя совпадает с путем в INSTALLED_APPS
+        self.assertEqual(app.name, 'apps.my_app')
         print(f"✅ Приложение '{app.verbose_name}' загружено")
 
     def test_database_connection(self):
@@ -28,20 +27,17 @@ class ProjectTests(TestCase):
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
             row = cursor.fetchone()
-            assert row[0] == 1
+            self.assertEqual(row[0], 1)
         print("✅ База данных работает")
 
     def test_home_page_response(self):
         """Проверка главной страницы."""
-        response = self.client.get('/')
-        # 404 - нормально, если URL не настроен
-        # Проверяем, что сервер отвечает
-        self.assertIsNotNone(response)
-        print(f"✅ Ответ сервера: {response.status_code}")
+        from django.urls import reverse
+        response = self.client.get(reverse('my_app:home'))
+        self.assertEqual(response.status_code, 200)
+        print(f"✅ Главная страница доступна")
 
     def test_debug_in_tests(self):
         """Проверка, что DEBUG выключен в тестах."""
-        # Это нормальное поведение Django
-        from django.conf import settings
-        assert settings.DEBUG is False
-        print("✅ DEBUG выключен в тестах (как и должно быть)")
+        self.assertFalse(settings.DEBUG)
+        print("✅ DEBUG выключен в тестах")
