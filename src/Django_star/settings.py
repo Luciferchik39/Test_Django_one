@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 # src/Django_star/settings.py
+import os
 from pathlib import Path
 import sys
+
 from .config import settings  # ← импортируем из config.py
-import os
 
 # BASE_DIR - корень проекта (где manage.py)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -110,7 +111,7 @@ elif settings.USE_POSTGRES:
             'USER': settings.DB_USER,
             'PASSWORD': settings.DB_PASSWORD,
             'HOST': settings.DB_HOST,
-            'PORT': settings.DB_PORT,
+            'PORT': str(settings.DB_PORT),
         }
     }
 else:
